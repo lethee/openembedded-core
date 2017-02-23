@@ -50,6 +50,11 @@ COMPATIBLE_HOST='(i.86|x86_64).*'
 OVMF_SECURE_BOOT_EXTRA_FLAGS ??= ""
 OVMF_SECURE_BOOT_FLAGS = "-DSECURE_BOOT_ENABLE=TRUE ${OVMF_SECURE_BOOT_EXTRA_FLAGS}"
 
+do_patch[postfuncs] += "fix_path_len"
+fix_path_len () {
+    sed -i -e 's/^#define MAX_PATH.*255/#define MAX_PATH 1023/' ${S}/BaseTools/Source/C/VfrCompile/EfiVfr.h
+}
+
 do_patch_append_class-native() {
     bb.build.exec_func('do_fix_iasl', d)
     bb.build.exec_func('do_fix_toolchain', d)
